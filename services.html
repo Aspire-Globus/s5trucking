@@ -17,6 +17,7 @@
     <link rel="icon" href="assets/logo.png" type="image/png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="styles.css" />
+    <script src="config.js"></script>
   </head>
   <body>
     <header class="page-header" aria-label="Main navigation">
@@ -244,26 +245,49 @@
 
       <section class="contact container" id="contact" aria-labelledby="contact-title">
         <div class="section-title">
-          <h2 id="contact-title">Need Service? Contact Us</h2>
-          <p>Get in touch for immediate assistance or to schedule service.</p>
+          <h2 id="contact-title">Contact &amp; Dispatch Form</h2>
+          <p>Short form. We respond within minutes.</p>
         </div>
         <div class="contact-layout">
           <div class="contact-image">
             <img src="assets/mechanic_contact_us.png" alt="Mechanic ready to help" />
-          </div>
-          <div class="contact-info">
-            <div class="contact-details">
-              <h3>Contact Information</h3>
-              <p><strong>Phone:</strong> <a href="tel:+13477412373">(347) 741-2373</a></p>
-              <p><strong>Email:</strong> <a href="mailto:service@s5truckrepair.com">service@s5truckrepair.com</a></p>
-              <p><strong>Address:</strong> 171 PENNSYLVANIA AVE, FLEMINGTON, NJ, 08822</p>
-              <p><strong>Hours:</strong> 24/7 Emergency Service</p>
-            </div>
-            <div class="hero-actions" style="margin-top: 2rem;">
-              <a class="btn primary" href="tel:+13477412373">Call Now</a>
-              <a class="btn secondary" href="contact-us.html">Contact Form</a>
+            <div class="dynamic-text-container">
+              <p class="dynamic-text" id="dynamicText">Did your truck break down?</p>
             </div>
           </div>
+          <form class="contact-form" id="contactForm" enctype="multipart/form-data">
+            <div id="formMessage" class="form-message" style="display: none;"></div>
+            <label>
+              Name
+              <input type="text" name="name" id="contactName" placeholder="Your name" required />
+            </label>
+            <label>
+              Phone
+              <input type="tel" name="phone" id="contactPhone" placeholder="(347) 741-2373" required />
+            </label>
+            <label>
+              Truck Type
+              <select name="truckType" id="contactTruckType" required>
+                <option value="">Select a truck</option>
+                <option value="semi">Semi (Sleeper)</option>
+                <option value="flatbed">Flatbed</option>
+                <option value="reefer">Reefer</option>
+                <option value="dryvan">Dry Van</option>
+              </select>
+            </label>
+            <label>
+              Problem description
+              <textarea name="message" id="contactMessage" rows="3" placeholder="Brake smoke, won't start, etc." required></textarea>
+            </label>
+            <label>
+              Upload photos (optional)
+              <input type="file" name="photos" id="contactPhotos" accept="image/*" />
+            </label>
+            <button type="submit" class="btn primary" id="submitBtn">
+              <span id="submitBtnText">Submit &amp; Dispatch</span>
+              <span id="submitBtnLoader" style="display: none;">Sending...</span>
+            </button>
+          </form>
         </div>
       </section>
     </main>
@@ -437,6 +461,114 @@
             }
           });
         });
+      }
+
+      // Contact form submission handler
+      const contactForm = document.getElementById('contactForm');
+      const formMessage = document.getElementById('formMessage');
+      const submitBtn = document.getElementById('submitBtn');
+      const submitBtnText = document.getElementById('submitBtnText');
+      const submitBtnLoader = document.getElementById('submitBtnLoader');
+
+      if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          formMessage.style.display = 'none';
+          formMessage.className = 'form-message';
+
+          submitBtn.disabled = true;
+          submitBtnText.style.display = 'none';
+          submitBtnLoader.style.display = 'inline';
+
+          try {
+            const formData = new FormData(contactForm);
+            const photoFile = document.getElementById('contactPhotos').files[0];
+
+            const data = new FormData();
+            data.append('name', formData.get('name'));
+            data.append('phone', formData.get('phone'));
+            data.append('truckType', formData.get('truckType'));
+            data.append('message', formData.get('message'));
+            
+            if (photoFile) {
+              data.append('photos', photoFile);
+            }
+
+            let apiUrl;
+            if (typeof API_CONFIG !== 'undefined' && API_CONFIG.BASE_URL) {
+              apiUrl = API_CONFIG.BASE_URL + '/api/contact';
+            } else if (window.location.protocol === 'file:' || 
+                       !window.location.hostname || 
+                       window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1') {
+              apiUrl = 'http://localhost:3000/api/contact';
+            } else {
+              apiUrl = 'http://23.118.218.91:3000/api/contact';
+            }
+
+            const response = await fetch(apiUrl, {
+              method: 'POST',
+              body: data
+            });
+
+            const result = await response.json();
+
+            formMessage.textContent = result.message;
+            formMessage.className = 'form-message ' + (result.success ? 'success' : 'error');
+            formMessage.style.display = 'block';
+
+            if (result.success) {
+              contactForm.reset();
+              formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+          } catch (error) {
+            console.error('Form submission error:', error);
+            formMessage.textContent = 'Sorry, there was an error sending your message. Please try calling us directly at (347) 741-2373.';
+            formMessage.className = 'form-message error';
+            formMessage.style.display = 'block';
+          } finally {
+            submitBtn.disabled = false;
+            submitBtnText.style.display = 'inline';
+            submitBtnLoader.style.display = 'none';
+          }
+        });
+      }
+
+      // Dynamic text rotation for Contact Form
+      const dynamicTexts = [
+        "Did your truck break down?",
+        "Trailer not working properly?",
+        "Need emergency roadside assistance?",
+        "Engine trouble on the highway?",
+        "Brake issues with your rig?",
+        "Tire problems on the road?",
+        "Stranded with a diesel problem?",
+        "Trailer door won't close?",
+        "Battery dead on your truck?"
+      ];
+
+      let currentIndex = 0;
+      const dynamicTextElement = document.getElementById('dynamicText');
+
+      function rotateText() {
+        if (dynamicTextElement) {
+          dynamicTextElement.style.opacity = '0';
+          setTimeout(() => {
+            currentIndex = (currentIndex + 1) % dynamicTexts.length;
+            dynamicTextElement.textContent = dynamicTexts[currentIndex];
+            dynamicTextElement.style.opacity = '1';
+          }, 300);
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          setInterval(rotateText, 4000);
+        });
+      } else {
+        setInterval(rotateText, 4000);
       }
     </script>
   </body>
