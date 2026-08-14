@@ -1,3 +1,4 @@
 User-agent: *
 Disallow: /admin/
 Disallow: /cgi-bin/
+Sitemap: https://s5truckrepair.com/sitemap.xml
