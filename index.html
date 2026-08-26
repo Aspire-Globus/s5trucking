@@ -1029,7 +1029,16 @@
             <p class="dynamic-text" id="dynamicText">Did your truck break down?</p>
           </div>
         </div>
-        <form class="contact-form" id="contactForm" enctype="multipart/form-data">
+        <form class="contact-form" id="contactForm"
+          action="https://formsubmit.co/s5truckrepairinc@gmail.com"
+          method="POST"
+          enctype="multipart/form-data">
+
+          <input type="hidden" name="_subject" value="New S5 Truck Repair Contact Request" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_next" value="https://s5truckrepair.com/?submitted=true#contact" />
+          <input type="hidden" name="_url" value="https://s5truckrepair.com/" />
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" />
           <div id="formMessage" class="form-message" style="display: none;"></div>
           <label>
             Name
@@ -1600,92 +1609,43 @@
     handleScroll();
 
     // Contact form submission handler
-    const contactForm = document.getElementById('contactForm');
-    const formMessage = document.getElementById('formMessage');
-    const submitBtn = document.getElementById('submitBtn');
-    const submitBtnText = document.getElementById('submitBtnText');
-    const submitBtnLoader = document.getElementById('submitBtnLoader');
+      // Contact form submission handler - FormSubmit
+      const contactForm = document.getElementById('contactForm');
+      const formMessage = document.getElementById('formMessage');
+      const submitBtn = document.getElementById('submitBtn');
+      const submitBtnText = document.getElementById('submitBtnText');
+      const submitBtnLoader = document.getElementById('submitBtnLoader');
 
-    if (contactForm) {
-      contactForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      if (contactForm) {
 
-        // Hide any previous messages
-        formMessage.style.display = 'none';
-        formMessage.className = 'form-message';
+        // Show success message after FormSubmit redirects back
+        const urlParams = new URLSearchParams(window.location.search);
 
-        // Disable submit button and show loading state
-        submitBtn.disabled = true;
-        submitBtnText.style.display = 'none';
-        submitBtnLoader.style.display = 'inline';
+        if (urlParams.get('submitted') === 'true') {
+          formMessage.textContent =
+            'Thank you! Your request has been sent successfully. We will contact you shortly.';
 
-        try {
-          // Get form data
-          const formData = new FormData(contactForm);
-          const photoFile = document.getElementById('contactPhotos').files[0];
-
-          // Create FormData object
-          const data = new FormData();
-          data.append('name', formData.get('name'));
-          data.append('phone', formData.get('phone'));
-          data.append('truckType', formData.get('truckType'));
-          data.append('message', formData.get('message'));
-
-          if (photoFile) {
-            data.append('photos', photoFile);
-          }
-
-          // Determine API URL from config
-          // Use config.js for API URL, fallback to localhost for local development
-          let apiUrl;
-          if (typeof API_CONFIG !== 'undefined' && API_CONFIG.BASE_URL) {
-            // Use configured API URL
-            apiUrl = API_CONFIG.BASE_URL + '/api/contact';
-          } else if (window.location.protocol === 'file:' ||
-            !window.location.hostname ||
-            window.location.hostname === 'localhost' ||
-            window.location.hostname === '127.0.0.1') {
-            // Local development fallback
-            apiUrl = 'http://localhost:3000/api/contact';
-          } else {
-            // Production fallback
-            apiUrl = 'http://23.118.218.91:3000/api/contact';
-          }
-
-          // Send form data to server
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            body: data
-          });
-
-          const result = await response.json();
-
-          // Show success or error message
-          formMessage.textContent = result.message;
-          formMessage.className = 'form-message ' + (result.success ? 'success' : 'error');
+          formMessage.className = 'form-message success';
           formMessage.style.display = 'block';
 
-          if (result.success) {
-            // Reset form on success
-            contactForm.reset();
-
-            // Scroll to message
-            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-
-        } catch (error) {
-          console.error('Form submission error:', error);
-          formMessage.textContent = 'Sorry, there was an error sending your message. Please try calling us directly at (347) 741-2373.';
-          formMessage.className = 'form-message error';
-          formMessage.style.display = 'block';
-        } finally {
-          // Re-enable submit button
-          submitBtn.disabled = false;
-          submitBtnText.style.display = 'inline';
-          submitBtnLoader.style.display = 'none';
+          setTimeout(() => {
+            formMessage.scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest'
+            });
+          }, 300);
         }
-      });
-    }
+
+        // Only show loading state.
+        // DO NOT prevent default because FormSubmit must submit the form normally.
+        contactForm.addEventListener('submit', () => {
+          submitBtn.disabled = true;
+          submitBtnText.style.display = 'none';
+          submitBtnLoader.style.display = 'inline';
+        });
+      }
+
+  
   </script>
 
   <!-- Hidden SEO Content - Location-Based Keywords and Content -->
