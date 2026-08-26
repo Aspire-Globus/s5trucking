@@ -463,47 +463,53 @@
             const photoFile = document.querySelector('#contactForm input[type="file"]').files[0];
 
             // Create FormData object
-            const data = new FormData();
-            data.append('name', formData.get('name'));
-            data.append('phone', formData.get('phone'));
-            data.append('truckType', formData.get('truckType'));
-            data.append('message', formData.get('message'));
-            
-            if (photoFile) {
-              data.append('photos', photoFile);
-            }
+          const data = new FormData();
 
-            // Determine API URL from config
-            let apiUrl;
-            if (typeof API_CONFIG !== 'undefined' && API_CONFIG.BASE_URL) {
-              apiUrl = API_CONFIG.BASE_URL + '/api/contact';
-            } else if (window.location.protocol === 'file:' || 
-                       !window.location.hostname || 
-                       window.location.hostname === 'localhost' || 
-                       window.location.hostname === '127.0.0.1') {
-              apiUrl = 'http://localhost:3000/api/contact';
-            } else {
-              apiUrl = 'http://23.118.218.91:3000/api/contact';
-            }
+        data.append('name', formData.get('name'));
+        data.append('phone', formData.get('phone'));
+        data.append('email', formData.get('email'));
+        data.append('truckType', formData.get('truckType'));
+        data.append('service', formData.get('service'));
+        data.append('message', formData.get('message'));
+        data.append('location', formData.get('location'));
 
-            // Send form data to server
-            const response = await fetch(apiUrl, {
-              method: 'POST',
-              body: data
-            });
+        data.append('_subject', 'New S5 Truck Repair Contact Request');
+        data.append('_template', 'table');
+        data.append('_replyto', formData.get('email'));
+        data.append('_url', 'https://s5truckrepair.com/contact-us.html');
 
-            const result = await response.json();
+        if (photoFile) {
+          data.append('photos', photoFile);
+        }
 
-            // Show success or error message
-            formMessage.textContent = result.message;
-            formMessage.className = 'form-message ' + (result.success ? 'success' : 'error');
-            formMessage.style.display = 'block';
+        const apiUrl = 'https://formsubmit.co/ajax/service@s5truckrepair.com';
 
-            if (result.success) {
-              contactForm.reset();
-              formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json'
+          },
+          body: data
+        });
 
+        const result = await response.json();
+
+        if (response.ok) {
+          formMessage.textContent =
+            'Thank you! Your request has been sent successfully. We will contact you shortly.';
+
+          formMessage.className = 'form-message success';
+          formMessage.style.display = 'block';
+
+          contactForm.reset();
+
+          formMessage.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+          });
+        } else {
+          throw new Error(result.message || 'Form submission failed');
+        }
           } catch (error) {
             console.error('Form submission error:', error);
             formMessage.textContent = 'Sorry, there was an error sending your message. Please try calling us directly at (347) 741-2373.';
