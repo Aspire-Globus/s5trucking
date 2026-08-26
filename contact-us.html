@@ -474,17 +474,7 @@
             }
 
             // Determine API URL from config
-            let apiUrl;
-            if (typeof API_CONFIG !== 'undefined' && API_CONFIG.BASE_URL) {
-              apiUrl = API_CONFIG.BASE_URL + '/api/contact';
-            } else if (window.location.protocol === 'file:' || 
-                       !window.location.hostname || 
-                       window.location.hostname === 'localhost' || 
-                       window.location.hostname === '127.0.0.1') {
-              apiUrl = 'http://localhost:3000/api/contact';
-            } else {
-              apiUrl = 'http://23.118.218.91:3000/api/contact';
-            }
+           const apiUrl = 'contact-proxy.php';
 
             // Send form data to server
             const response = await fetch(apiUrl, {
