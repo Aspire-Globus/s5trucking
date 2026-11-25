@@ -115,6 +115,8 @@
   <link rel="mask-icon" href="assets/logo.png" color="#040304" />
 
   <!-- Fonts and Styles -->
+  <link rel="dns-prefetch" href="//formsubmit.co" />
+  <link rel="preconnect" href="https://formsubmit.co" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -1290,48 +1292,69 @@ if (location.pathname === '/index.html') {
           </div>
         </div>
         <form class="contact-form" id="contactForm"
-          action="https://formsubmit.co/s5truckrepairinc@gmail.com"
-          method="POST"
-          enctype="multipart/form-data">
-
-          <input type="hidden" name="_subject" value="New S5 Truck Repair Contact Request" />
-          <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_next" value="https://s5truckrepair.com/?submitted=true#contact" />
-          <input type="hidden" name="_url" value="https://s5truckrepair.com/" />
-          <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" />
-          <div id="formMessage" class="form-message" style="display: none;"></div>
-          <label>
-            Name
-            <input type="text" name="name" id="contactName" placeholder="Your name" required />
-          </label>
-          <label>
-            Phone
-            <input type="tel" name="phone" id="contactPhone" placeholder="(347) 741-2373" required />
-          </label>
-          <label>
-            Truck Type
-            <select name="truckType" id="contactTruckType" required>
-              <option value="">Select a truck</option>
-              <option value="semi">Semi (Sleeper)</option>
-              <option value="flatbed">Flatbed</option>
-              <option value="reefer">Reefer</option>
-              <option value="dryvan">Dry Van</option>
-            </select>
-          </label>
-          <label>
-            Problem description
-            <textarea name="message" id="contactMessage" rows="3" placeholder="Brake smoke, won't start, etc."
-              required></textarea>
-          </label>
-          <label>
-            Upload photos (optional)
-            <input type="file" name="photos" id="contactPhotos" accept="image/*" />
-          </label>
-          <button type="submit" class="btn primary" id="submitBtn">
-            <span id="submitBtnText">Submit &amp; Dispatch</span>
-            <span id="submitBtnLoader" style="display: none;">Sending...</span>
-          </button>
-        </form>
+            action="https://formsubmit.co/s5truckrepairinc@gmail.com"
+            method="POST"
+            enctype="multipart/form-data">
+            <input type="hidden" name="_subject" value="New S5 Truck Repair Contact Request" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" name="_next" value="https://s5truckrepair.com/contact-us.html?submitted=true#contact-form" />
+            <input type="hidden" name="_url" value="https://s5truckrepair.com/contact-us.html" />
+            <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" />
+            <div id="formMessage" class="form-message" style="display: none;"></div>
+            <label>
+              Name
+              <input type="text" name="name" placeholder="Your name" required />
+            </label>
+            <label>
+              Phone
+              <input type="tel" name="phone" placeholder="(347) 741-2373" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" placeholder="your.email@example.com" />
+            </label>
+            <label>
+              Truck Type
+              <select name="truckType" required>
+                <option value="">Select a truck</option>
+                <option value="semi">Semi (Sleeper)</option>
+                <option value="flatbed">Flatbed</option>
+                <option value="reefer">Reefer</option>
+                <option value="dryvan">Dry Van</option>
+                <option value="bus">Bus</option>
+                <option value="rv">RV</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label>
+              Service Needed
+              <select name="service" required> 
+                <option value="">Select a service</option>
+                <option value="roadside">Roadside Assistance</option>
+                <option value="repair">Repair Service</option>
+                <option value="inspection">DOT Inspection</option>
+                <option value="maintenance">Preventive Maintenance</option>
+                <option value="towing">Towing</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label>
+              Problem description
+              <textarea name="message" rows="3" placeholder="Brake smoke, won't start, etc." required></textarea>
+            </label>
+            <label>
+              Location
+              <input type="text" name="location" placeholder="Current location or address" required />
+            </label>
+            <label>
+              Upload photos (optional)
+              <input type="file" name="photos" accept="image/*" />
+            </label>
+            <button type="submit" class="btn primary" id="submitBtn">
+              <span id="submitBtnText">Submit &amp; Dispatch</span>
+              <span id="submitBtnLoader" style="display: none;">Sending...</span>
+            </button>
+          </form>
       </div>
     </section>
   </main>
